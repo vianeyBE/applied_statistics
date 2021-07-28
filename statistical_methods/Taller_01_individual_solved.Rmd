@@ -1,1 +1,165 @@
+---
+title: "Actividad 1: Manipulación de datos en R "
+subtitle: "Métodos Estadísticos 2020-2"
+author: "Vianey Paola Barrera Enriquez"
+date: "23/07/2021"
+output: pdf_document
+fig_width: 4 
+fig_height: 2 
+---
+```{r include=FALSE}
+dir= "D:/Google Drive/Academic/02 F.U. Los Libertadores/Trimestre 01/Statistical Methods/"
+```
+
+```{r include=FALSE, cache=FALSE}
+options(scipen = 1, digits = 2)
+```
+
+```{r include=FALSE}
+#knitr::opts_chunk$set(include = FALSE)
+library(readxl)
+library(kableExtra)
+library(ggplot2)
+```
+
+## Librerias usadas
+* readxl
+* kableExtra
+* ggplot2
+
+## Cargar Datos
+Empezamos cargando la base de datos en formato *.xls* usando la  libreria **readxl**. Con la funcion *dim()* podemos ver las dimensiones de la base datos, el data frame creado se compone de 13 variables y 138 observaciones. 
+```{r echo=TRUE}
+cumbres <- read_excel(paste(dir, "cumbres.xls", sep = ""))
+attach(cumbres)
+dim(cumbres)
+```
+la funcion *head* nos permite visualizar las primeras cinco filas, lo cual es de utilidad para familiarizarse con los datos. La tabla fue transpuesta, usando la funcion *t()*, para facilizar la visualizacion de la tabla.  
+```{r echo=TRUE}
+t(head(cumbres)) %>%
+  kbl(booktabs = TRUE)
+```
+Las variables de interes son
+
+* TEMPCOM: temperatura combustibles forestales
+* HUMCOMB: humedad de los combustibles forestales
+* TEMP: temperatura
+* HR: humedad relativa
+* RAD-SOL: radiación solar
+* HUMSUBS: humedad de los suburbios  
+
+
+## Punto 1
+Ahora se procede a explorar las variables TEMPCOMP, HUMCOMB, TEMP y HR, por medio de los estadísticos de la media artimetica (*mean()*), varianza (*var()*) y desviacion estandar (*sd()*). 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+print("TEMPCOMP - Temperatura Combustibles forestales:")
+print(paste("La media artimetica es: ", mean(TEMPCOMB)))
+paste("la varianza es: ", var(TEMPCOMB, na.rm = FALSE))
+paste("La desviacion estandar es: ", sd(TEMPCOMB, na.rm = FALSE))
+paste("La coeficiente de variacion es: ", sd(TEMPCOMB, na.rm = FALSE)/mean(TEMPCOMB)*100)
+```
+```{r, fig.width=5,fig.height=2}
+ggplot() + geom_boxplot(aes(y=TEMPCOMB), fill="steelblue3", alpha = 0.75) +
+  theme_bw() + scale_x_discrete( ) + coord_flip() + xlab("")
+```
+
+
+Podemos observar que la temperatura promedio de combustibles forestales tiene un valor de 25.87°C, la varianza tiene un valor de 97.73°C^2 y la desviacion estandar es 9.73°C, lo cual indica que en, en media, la diferencia de temperatura a lo largo del dia es de 9.73°C. El coeficiente de variación del 37.62% nos indica que los datos son heterogeneos y por tanto esta variable presenta notables diferencias. 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+print("HUMCOMB - Humedad de los combustibles forestales:")
+paste("La media artimetica es: ", mean(HUMCOMB))
+paste("la varianza es: ", var(HUMCOMB, na.rm = FALSE))
+paste("La desviacion estandar es: ", sd(HUMCOMB, na.rm = FALSE))
+paste("La coeficiente de variacion es: ", sd(HUMCOMB, na.rm = FALSE)/mean(HUMCOMB)*100)
+```
+```{r, fig.width=5,fig.height=2}
+ggplot() + geom_boxplot(aes(y=HUMCOMB), fill="steelblue3", alpha = 0.75) +
+  theme_bw() + scale_x_discrete( ) + coord_flip() + xlab("")
+```
+
+La humedad del combustible promedio es del 13.90%, la varianza es de 10.17 y la desviacion estandar de 3.19% indicando que la humedad por lo general varia en 3.19% a lo largo del experimento. En conjunto con el coeficiente de variación de 22.94%, se puede decir que los datos son moderadamente heterogeneos, es decir hay diferencias importantes en la humedad del combustible.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+print("TEMP - Temperatura ambiental:")
+paste("La media artimetica es: ", mean(TEMP))
+paste("la varianza es: ", var(TEMP, na.rm = FALSE))
+paste("La desviacion estandar es: ", sd(TEMP, na.rm = FALSE))
+paste("La coeficiente de variacion es: ", sd(TEMP, na.rm = FALSE)/mean(TEMP)*100)
+```
+```{r, fig.width=5,fig.height=2}
+ggplot() + geom_boxplot(aes(y=TEMP), fill="steelblue3", alpha = 0.75) +
+  theme_bw() + scale_x_discrete( ) + coord_flip() + xlab("")
+```
+
+La temperatura del ambiente durante el periodo de la toma de datos en la región boscosa fue de 23.21°C, la varianza fue de 39.50, la desviacion estandar de 6.29°C y el coeficiente de variacion de 27.08%. Las estadisticas nos indican que los datos recolectados fueron moderadamente heterogeneos y con una variacion de 6.29°C a lo largo de la toma de medidas. 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+print("HR - Humedad Relativa del ambiente:")
+paste("La media artimetica es: ", mean(HR))
+paste("la varianza es: ", var(HR, na.rm = FALSE))
+paste("La desviacion estandar es: ", sd(HR, na.rm = FALSE))
+paste("La coeficiente de variacion es: ", sd(HR, na.rm = FALSE)/mean(HR)*100)
+```
+```{r, fig.width=5,fig.height=2}
+ggplot() + geom_boxplot(aes(y=HR), fill="steelblue3", alpha = 0.75) +
+  theme_bw() + scale_x_discrete( ) + coord_flip() + xlab("")
+```
+
+La humedad relativa en las cumbres boscosas fue en promedio de 61.33%, se obtuvo una varianza de 585.06, una desviacion estandar de 24.19% y un coeficiente de variación de 39.44%, estos valores indican datos heterogeneos. 
+
+
+## Punto 2
+```{r echo=TRUE}
+num_major = length(TEMPCOMB[TEMPCOMB>=mean(TEMPCOMB)])
+perc_major = num_major/length(TEMPCOMB)*100
+```
+La variable TEMPCOB tiene `r num_major` valores mayores o igual a la media de dicha variable, este valor representa el `r perc_major`% del total de los datos
+
+```{r echo=TRUE}
+num_minor = length(HR[HR>=mean(HR)])
+perc_minor = num_minor/length(HR)*100
+```
+La variable HR tiene `r num_minor` valores menores o igual a la media, este valor representa el `r perc_minor`% del total de los datos de humedad relativa
+
+
+## Punto 3
+
+
+## Punto 4
+
+RAD-SOL
+
+```{r}
+ggplot() + 
+  geom_histogram(aes(x=HUMCOMB),
+                          binwidth=1,
+                          fill="#69b3a2", color="#e9ecef", alpha=0.9) +
+  theme_bw() + ggtitle("Humedad del Combustible Forestal")
+
+```
+
+```{r}
+ggplot() + 
+  geom_histogram(aes(x=`RAD-SOL`),
+                          binwidth=20,
+                          fill="#E69F00", color="#E69F00", alpha=0.9) +
+  theme_bw() + ggtitle("radiación Solar")
+```
+
+
+
+## Punto 5
+
+![Ecuación ](ecuacion.PNG){width=25%}
+```{r}
+solution = ( sqrt(16) + (5*4) - (3^2) )/( (1/2)*(4-8) + 1 )
+paste("El valor de la ecuación es:",solution)
+```
+
+
+
+
+
 
