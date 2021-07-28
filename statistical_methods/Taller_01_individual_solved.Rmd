@@ -129,8 +129,7 @@ La variable HR tiene `r num_minor` valores menores o igual a la media, este valo
 
 ## Punto 4
 
-RAD-SOL
-
+### Histograma HUMCOM
 ```{r}
 ggplot() + 
   geom_histogram(aes(x=HUMCOMB),
@@ -140,12 +139,13 @@ ggplot() +
 
 ```
 
+### Histograma RAD-SOL
 ```{r}
 ggplot() + 
   geom_histogram(aes(x=`RAD-SOL`),
-                          binwidth=20,
+                          binwidth=100,
                           fill="#E69F00", color="#E69F00", alpha=0.9) +
-  theme_bw() + ggtitle("radiación Solar")
+  theme_bw() + ggtitle("Radiación Solar")
 ```
 
 
