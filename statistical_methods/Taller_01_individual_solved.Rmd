@@ -4,15 +4,14 @@ subtitle: "Métodos Estadísticos 2020-2"
 author: "Vianey Paola Barrera Enriquez"
 date: "23/07/2021"
 output: pdf_document
-fig_width: 4 
-fig_height: 2 
 ---
+
 ```{r include=FALSE}
 dir= "D:/Google Drive/Academic/02 F.U. Los Libertadores/Trimestre 01/Statistical Methods/"
 ```
 
 ```{r include=FALSE, cache=FALSE}
-options(scipen = 1, digits = 2)
+options(scipen = 1, digits = 4)
 ```
 
 ```{r include=FALSE}
@@ -28,86 +27,89 @@ library(ggplot2)
 * ggplot2
 
 ## Cargar Datos
-Empezamos cargando la base de datos en formato *.xls* usando la  libreria **readxl**. Con la funcion *dim()* podemos ver las dimensiones de la base datos, el data frame creado se compone de 13 variables y 138 observaciones. 
+Empezamos cargando la base de datos en formato *.xls* usando la  libreria **readxl**. Con la función *dim()* podemos ver las dimensiones de la base datos, el dataframe creado se compone de 13 variables y 138 observaciones. 
 ```{r echo=TRUE}
 cumbres <- read_excel(paste(dir, "cumbres.xls", sep = ""))
 attach(cumbres)
 dim(cumbres)
 ```
-la funcion *head* nos permite visualizar las primeras cinco filas, lo cual es de utilidad para familiarizarse con los datos. La tabla fue transpuesta, usando la funcion *t()*, para facilizar la visualizacion de la tabla.  
+la función *head* nos permite visualizar las primeras cinco filas, lo cual es de utilidad para familiarizarse con los datos. La tabla fue transpuesta, usando la función *t()*, para facilitar la visualización de la tabla.  
 ```{r echo=TRUE}
 t(head(cumbres)) %>%
   kbl(booktabs = TRUE)
 ```
-Las variables de interes son
+Las variables de interés son
 
-* TEMPCOM: temperatura combustibles forestales
+* TEMPCOM: temperatura de combustibles forestales
 * HUMCOMB: humedad de los combustibles forestales
 * TEMP: temperatura
 * HR: humedad relativa
 * RAD-SOL: radiación solar
 * HUMSUBS: humedad de los suburbios  
 
-
 ## Punto 1
-Ahora se procede a explorar las variables TEMPCOMP, HUMCOMB, TEMP y HR, por medio de los estadísticos de la media artimetica (*mean()*), varianza (*var()*) y desviacion estandar (*sd()*). 
+Ahora se procede a explorar las variables TEMPCOMP, HUMCOMB, TEMP y HR, por medio de los estadísticos de la media aritmética  (*mean()*), varianza (*var()*) y desviación estándar (*sd()*). 
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-print("TEMPCOMP - Temperatura Combustibles forestales:")
-print(paste("La media artimetica es: ", mean(TEMPCOMB)))
-paste("la varianza es: ", var(TEMPCOMB, na.rm = FALSE))
-paste("La desviacion estandar es: ", sd(TEMPCOMB, na.rm = FALSE))
-paste("La coeficiente de variacion es: ", sd(TEMPCOMB, na.rm = FALSE)/mean(TEMPCOMB)*100)
+### Temperatura de combustibles forestales - TEMPCOM
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+media = mean(TEMPCOMB) # Media
+varianza = var(TEMPCOMB) #Varianza
+desv = sd(TEMPCOMB) #Desviación estandar
+cv = sd(TEMPCOMB)/mean(TEMPCOMB)*100 #coeficiente de variación
+print(c(media, varianza, desv, cv))
 ```
-```{r, fig.width=5,fig.height=2}
+Podemos observar que la temperatura promedio de combustibles forestales tiene un valor de `r media`°C, la varianza tiene un valor de `r varianza`°C^2 y la desviación estándar es `r desv`°C, lo cual indica que en, en media, la diferencia de temperatura a lo largo del día es de `r desv`°C. El coeficiente de variación del `r cv`% nos indica que los datos son heterogéneos y por tanto esta variable presenta notables diferencias entre las medidas tomadas. 
+
+```{r echo=TRUE, fig.height=2, fig.width=5}
 ggplot() + geom_boxplot(aes(y=TEMPCOMB), fill="steelblue3", alpha = 0.75) +
   theme_bw() + scale_x_discrete( ) + coord_flip() + xlab("")
 ```
 
-
-Podemos observar que la temperatura promedio de combustibles forestales tiene un valor de 25.87°C, la varianza tiene un valor de 97.73°C^2 y la desviacion estandar es 9.73°C, lo cual indica que en, en media, la diferencia de temperatura a lo largo del dia es de 9.73°C. El coeficiente de variación del 37.62% nos indica que los datos son heterogeneos y por tanto esta variable presenta notables diferencias. 
-
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-print("HUMCOMB - Humedad de los combustibles forestales:")
-paste("La media artimetica es: ", mean(HUMCOMB))
-paste("la varianza es: ", var(HUMCOMB, na.rm = FALSE))
-paste("La desviacion estandar es: ", sd(HUMCOMB, na.rm = FALSE))
-paste("La coeficiente de variacion es: ", sd(HUMCOMB, na.rm = FALSE)/mean(HUMCOMB)*100)
+### Humedad Combustible - HUMCOMB
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+media = mean(HUMCOMB) 
+varianza = var(HUMCOMB)
+desv = sd(HUMCOMB)
+cv = sd(HUMCOMB)/mean(HUMCOMB)*100 
 ```
-```{r, fig.width=5,fig.height=2}
+
+```{r echo=FALSE, fig.height=2, fig.width=5}
 ggplot() + geom_boxplot(aes(y=HUMCOMB), fill="steelblue3", alpha = 0.75) +
   theme_bw() + scale_x_discrete( ) + coord_flip() + xlab("")
 ```
 
-La humedad del combustible promedio es del 13.90%, la varianza es de 10.17 y la desviacion estandar de 3.19% indicando que la humedad por lo general varia en 3.19% a lo largo del experimento. En conjunto con el coeficiente de variación de 22.94%, se puede decir que los datos son moderadamente heterogeneos, es decir hay diferencias importantes en la humedad del combustible.
+La humedad del combustible promedio es del `r media`%, la varianza es de `r varianza` y la desviación estándar de `r desv`% indicando que la humedad por lo general varía en `r desv`% a lo largo del experimento. En conjunto con el coeficiente de variación de `r cv`%, se puede decir que los datos son moderadamente heterogéneos, es decir hay diferencias importantes en la humedad del combustible.
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-print("TEMP - Temperatura ambiental:")
-paste("La media artimetica es: ", mean(TEMP))
-paste("la varianza es: ", var(TEMP, na.rm = FALSE))
-paste("La desviacion estandar es: ", sd(TEMP, na.rm = FALSE))
-paste("La coeficiente de variacion es: ", sd(TEMP, na.rm = FALSE)/mean(TEMP)*100)
+
+### Temperatura
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+media = mean(TEMP) 
+varianza = var(TEMP)
+desv = sd(TEMP)
+cv = sd(TEMP)/mean(TEMP)*100 
 ```
-```{r, fig.width=5,fig.height=2}
+```{r echo=FALSE, fig.height=2, fig.width=5}
 ggplot() + geom_boxplot(aes(y=TEMP), fill="steelblue3", alpha = 0.75) +
   theme_bw() + scale_x_discrete( ) + coord_flip() + xlab("")
 ```
 
-La temperatura del ambiente durante el periodo de la toma de datos en la región boscosa fue de 23.21°C, la varianza fue de 39.50, la desviacion estandar de 6.29°C y el coeficiente de variacion de 27.08%. Las estadisticas nos indican que los datos recolectados fueron moderadamente heterogeneos y con una variacion de 6.29°C a lo largo de la toma de medidas. 
+La temperatura del ambiente durante el período de la toma de datos en la región boscosa fue de `r media`°C, la varianza fue de `r varianza`, la desviación estándar de `r desv`°C y el coeficiente de variación de `r cv`%. Las estadísticas nos indican que los datos recolectados fueron moderadamente heterogéneos con una variación de `r desv`°C a lo largo de la toma de medidas. 
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-print("HR - Humedad Relativa del ambiente:")
-paste("La media artimetica es: ", mean(HR))
-paste("la varianza es: ", var(HR, na.rm = FALSE))
-paste("La desviacion estandar es: ", sd(HR, na.rm = FALSE))
-paste("La coeficiente de variacion es: ", sd(HR, na.rm = FALSE)/mean(HR)*100)
+
+### Humedad Relativa
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+media = mean(HR)
+varianza = var(HR)
+desv = sd(HR)
+cv = sd(HR)/mean(HR)*100 
 ```
-```{r, fig.width=5,fig.height=2}
+```{r echo=FALSE, fig.height=2, fig.width=5}
 ggplot() + geom_boxplot(aes(y=HR), fill="steelblue3", alpha = 0.75) +
   theme_bw() + scale_x_discrete( ) + coord_flip() + xlab("")
 ```
 
-La humedad relativa en las cumbres boscosas fue en promedio de 61.33%, se obtuvo una varianza de 585.06, una desviacion estandar de 24.19% y un coeficiente de variación de 39.44%, estos valores indican datos heterogeneos. 
+La humedad relativa en las cumbres boscosas fue en promedio de `r media`%, se obtuvo una varianza de `r varianza`, una desviación estándar de `r desv`% y un coeficiente de variación de `r cv`%, estos valores indican datos heterogéneos, es decir que presentan una altas diferencias entre ellos. 
 
 
 ## Punto 2
@@ -130,7 +132,8 @@ La variable HR tiene `r num_minor` valores menores o igual a la media, este valo
 ## Punto 4
 
 ### Histograma HUMCOM
-```{r}
+El histograma es una representación aproximada de la distribución de una variable numérica, en este caso de la humedad del combustible. A partir del gráfico se puede observar que estos datos **no** se asemejan a una distribución normal, teniendo en cuenta que los *bins* de este gráfico representan una unidad, podemos decir que el valor del 18%, es aquel que tiene la mayor frecuencia, seguido del 9% y en tercer lugar 13%.
+```{r, fig.width=5,fig.height=5}
 ggplot() + 
   geom_histogram(aes(x=HUMCOMB),
                           binwidth=1,
@@ -140,7 +143,8 @@ ggplot() +
 ```
 
 ### Histograma RAD-SOL
-```{r}
+El siguiente histograma nos muestra las frecuencias de la radiación solar, el tamaño de cada clase es de 100 (*bins*). La mayor parte de las medidas de esta variable, toman un valor entre 0 y 100, las clases con valores altos tiene frecuencias muy bajas. Respecto a la geometría, esta variable tampoco se asemeja a una distribución normal y de hecho tiene fuerte asimetría hacia la izquierda. 
+```{r, fig.width=5,fig.height=5}
 ggplot() + 
   geom_histogram(aes(x=`RAD-SOL`),
                           binwidth=100,
@@ -148,6 +152,15 @@ ggplot() +
   theme_bw() + ggtitle("Radiación Solar")
 ```
 
+
+### Diagrama de dispersión HR y TEMP
+A continuación se ilustran las variables temperatura y humedad relativa es forma de gráfico de dispersión, el cual nos indica cuánto afecta una variable a la otra. Se puede observar que ambas variables tienen un comportamiento inverso, es decir a bajas temperaturas se registró altos valores de humedad relativa en el ambiente; a medida que la temperatura incrementa, la humedad relativa desciende hasta alcanzar su valor mínimo alrededor del 40%.  
+
+```{r}
+ggplot(data=cumbres, aes(x=TEMP, y=HR)) + 
+  geom_point(color="#69b3a2", alpha=0.80, size=3, stroke=1)+
+  theme_bw() + ggtitle("Gráfico Dispersión Temperatura y Humedad Relativa")
+```
 
 
 ## Punto 5
