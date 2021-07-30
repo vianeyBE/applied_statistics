@@ -1,8 +1,8 @@
 ---
-title: "Actividad 1: Manipulación de datos en R "
+title: "Manipulación de datos en R "
 subtitle: "Métodos Estadísticos 2020-2"
-author: "Vianey Paola Barrera Enriquez"
-date: "23/07/2021"
+#author: ""
+#date: "23/07/2021"
 output: pdf_document
 ---
 
@@ -127,7 +127,33 @@ La variable HR tiene `r num_minor` valores menores o igual a la media, este valo
 
 
 ## Punto 3
+Una tabla de contingencia permite resumir la distribución de frecuencias conjuntas de dos variables, en este caso se trabajara con la humedad relativa (HR) y la radiación solar (RAD-SOL). En *R* podemos usar la funcion *table()* para obtener una tabla de contingencia, debido a que las variables son cualitativas inicialmente se procede a categorizar las variables usando la función *cut()*: 
 
+```{r}
+HR_category <- cut(HR, 
+                  c(30,40,50,60,70,80,90,100),
+                  c( "30-39%", "40-49%", "50-59%", "60-69%", "70-79%", "80-89%", "90-100%"))
+summary(HR_category)
+```
+```{r}
+TEMP_category = cut(TEMP, 
+                    c(10,20,30,40),
+                    c("Baja 10-19°C","Media 20-29°C", "Alta 30-39°C"))
+summary(TEMP_category)
+```
+
+
+```{r}
+tb = table(HR_category, TEMP_category)
+addmargins(tb) %>%  kbl(booktabs = TRUE)
+```
+
+```{r}
+addmargins(prop.table(tb)) %>%  kbl(booktabs = TRUE)
+```
+De las previas tablas podemos resaltar que, cuando la temperatura es baja la humedad relativa tiende a ser mayor, observandose la mayor proporción (22.46%) entre 90-100%. Para una temperatura media, la humedad suele reportarse entre un 40-49% con una proporción del 31.88%. Finalmente, a una alta temperatura la humedad alcanza los valores mas bajos (30-19%) con una proporción del 15.22%.
+
+Como observaciones finales, la mayor proporcion de observaciones (31.88%) se encuentra cuando la temperatura media y la humedad relativa del ambiente se encuentra entre 40-49%
 
 ## Punto 4
 
@@ -154,7 +180,7 @@ ggplot() +
 
 
 ### Diagrama de dispersión HR y TEMP
-A continuación se ilustran las variables temperatura y humedad relativa es forma de gráfico de dispersión, el cual nos indica cuánto afecta una variable a la otra. Se puede observar que ambas variables tienen un comportamiento inverso, es decir a bajas temperaturas se registró altos valores de humedad relativa en el ambiente; a medida que la temperatura incrementa, la humedad relativa desciende hasta alcanzar su valor mínimo alrededor del 40%.  
+A continuación se ilustran las variables temperatura y humedad relativa es forma de gráfico de dispersión, el cual nos indica cuánto afecta una variable a la otra. Se puede observar que ambas variables tienen un comportamiento inverso, es decir a bajas temperaturas se registró altos valores de humedad relativa en el ambiente; a medida que la temperatura incrementa, la humedad relativa desciende hasta alcanzar su valor mínimo alrededor del 33%.  
 
 ```{r}
 ggplot(data=cumbres, aes(x=TEMP, y=HR)) + 
