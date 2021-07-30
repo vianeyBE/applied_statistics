@@ -1,8 +1,6 @@
 ---
 title: "Manipulación de datos en R "
-subtitle: "Métodos Estadísticos 2020-2"
-#author: ""
-#date: "23/07/2021"
+subtitle: "Métodos Estadísticos 2021-2"
 output: pdf_document
 ---
 
