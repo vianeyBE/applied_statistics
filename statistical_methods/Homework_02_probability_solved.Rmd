@@ -1,0 +1,154 @@
+---
+title: "Homework 2"
+subtitle: "Métodos Estadísticos"
+output: pdf_document
+---
+
+```{r include=FALSE}
+dir= "D:/Google Drive/Academic/02 F.U. Los Libertadores/Trimestre 01/Statistical Methods/"
+```
+
+```{r cache=FALSE, include=FALSE}
+options(scipen = 1, digits = 4)
+```
+
+```{r include=FALSE}
+library(prob)
+library(tidyverse)
+library(kableExtra)
+```
+
+## Exercise 1
+
+The first step is to set up a sample space using the functions *rolldie()* that it will simulate all the possible outcomes of rolling a fair dice. Then, a new column will be create to contain the sum of both dice:
+
+```{r echo=TRUE}
+rolldie(2) %>% mutate(sum_dice = X1+X2) -> dice
+head(dice) %>%  kbl(booktabs = TRUE)
+```
+The probability that the sum of the numbers is a 7 is 16.67%: 
+```{r echo=TRUE}
+sum(dice$sum_dice == 7)/dim(dice)[1]*100
+```
+
+The probability that the sum is at least 11 is 8.33%: 
+```{r echo=TRUE}
+sum(dice$sum_dice >= 11)/dim(dice)[1]*100
+```
+The probability that the sum is at most 2 is 2.78%:
+```{r echo=TRUE}
+sum(dice$sum_dice <= 2)/dim(dice)[1]*100
+```
+The probability to get a double is 16.67%
+
+```{r echo=TRUE}
+dice[dice$X1==dice$X2,] %>%  kbl(booktabs = TRUE)
+```
+
+```{r echo=TRUE}
+sum(dice$X1==dice$X2)/dim(dice)[1]*100
+```
+
+The probability to do not get a double is 83.33%
+```{r echo=TRUE}
+head(dice[dice$X1 != dice$X2,]) %>%  kbl(booktabs = TRUE)
+```
+
+```{r echo=TRUE}
+sum(dice$X1!=dice$X2)/dim(dice)[1]*100
+```
+## Exercise 2
+
+#### In how many ways can 6 people be lined up to get on a bus?
+This case is a permutation where all the elements are distinguishable, so it is a permutation without replacement. The possible outcomes are defined by 6P6=6!, which has a value of 720.
+```{r}
+factorial(6)
+```
+Some of the possible outcomes are shown below
+```{r}
+head(permn(6))
+```
+#### If 3 specific persons, among 6, insist of following each other, how many ways are possible to be lined up?
+In this case, we have a group that want to be together plus three persons that can take random positions. So, it is like there are four elements -4*P*4- (3 persons and 1 group). Additionally, to consider de multiple arrangement within the group an additional term is necessary -3*P*3-. In conclusion, there are 144 ways.
+
+```{r}
+factorial(4)*factorial(3)
+```
+#### If 2 specific persons, among 6, refuse of following each other, how many ways are possible?
+Without any conditions, people can be organize in 6! ways. From this number it is possible to subtract the number of arrangement where these two persons are together.
+
+If these two persons are together, it will be like having five elements (4 persons and the two specific), this is represented as 5*P*5=5!. The two persons can be in 2*P*2=2!=2 ways. The total number of ways where these two persons are together is 240
+```{r}
+factorial(5)*2
+```
+Now, let's subtract this number from the total number of ways that 6 persons can be lined up. 
+```{r}
+factorial(6)-factorial(5)*2
+```
+Finally, there are 480 ways people can be lined up, but two specific individuals are separated. 
+
+## Exercise 3
+**In how many ways can 4 boys and 5 girls sit in a row if the boys and girls must alternate?**
+A girl will be on each end and boys can only take 2th, 4th ,6th ,8th positions. Girls can be sited in 5P5 ways and boys in 4P4 ways. So, Girls and Boys can sit in 2880 ways. 
+```{r}
+factorial(5)*factorial(4)
+```
+## Exercise 4
+**How many ways are there to select 3 candidates from 8 equally qualified recent graduates for
+openings in an accounting firm?**
+There are 8 graduates available but only three open positions, this is represented as 8P3. There are 56 ways three candidates can be chosen from eight recent graduates
+```{r}
+choose(8,3)
+```
+## Excercise 5 - Determinate C value in a function
+$$ f(x)= c(x^2+4) for x=0, 1, 2, 3.$$
+Taking into account that $\sum f(x)$ must be 1:
+$$ c[(0^2+4) + (1^2+4) + (2^2+4) + (3^2 +4)] = 1 $$
+$$ c(4+5+8+13)=1 $$
+$$c(30)=1$$
+$$ c = \frac{1}{30} $$
+Now, we procede to calculate the probability for every *X* value and store them in a data frame:
+```{r}
+x_f = c(0,1,2,3)
+prob_f = 1/30 *(x_f^2+4)
+dt_f = data.frame(x_f, prob_f)
+dt_f %>% kbl()
+```
+
+Finally, a plot will be generated to visualize the distribution 
+```{r, fig.width=3,fig.height=3}
+ggplot(data=dt_f, aes(x=x_f, y=prob_f, fill=x_f)) + 
+  geom_bar(stat = "identity", show.legend = FALSE) + ylab("Probability") +
+  xlab("X") + theme_minimal() + 
+    ggtitle("Probability distribution")
+
+```
+
+## Excercise 6 - Defective TV sets
+
+First, Let's create a vector to store the values of the variable (number of defective TVs) and its probability using combinations
+```{r}
+x <- c(0,1,2)
+N <- 7 # Total number
+n <- 3 # sample
+d <- 2 # defective TV
+prob_tv = (choose(d,x)*choose(N-d,n-x))/choose(N,n)
+
+```
+
+Now, a data frame will be created to store the variable and its probability.  
+
+```{r}
+dt = data.frame(x, prob_tv)
+dt %>%  kbl(booktabs = TRUE)
+```
+
+Finally, a histogram will be plotted to visualize the results 
+```{r, fig.width=3,fig.height=3}
+ggplot(data=dt, aes(x=x, y=prob_tv, fill=x)) + 
+  geom_bar(stat = "identity", show.legend = FALSE) + ylab("Probability defective TVs sets") +
+  xlab("Num. defective TV sets") + theme_minimal() + 
+    ggtitle("Probability distribution")
+
+```
+
