@@ -1,2 +1,2 @@
 # applied_statistics
-code development during my studies 
+code developed during my studies 
