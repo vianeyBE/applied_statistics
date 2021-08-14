@@ -1,0 +1,286 @@
+---
+title: "Distribution Probability and Confidence Intervals"
+subtitle: "Statistical Methods"
+output: html_document
+---
+
+```{r include=FALSE}
+dir= "D:/Google Drive/Academic/02 F.U. Los Libertadores/Trimestre 01/Statistical Methods/Homework/"
+library(tidyverse)
+library(kableExtra)
+library(ggplot2)
+```
+
+```{r cache=FALSE, include=FALSE}
+options(scipen = 1, digits = 4)
+```
+
+## Exercise 1 - Heights of Teams.
+This is a case of inference over the mean ($\mu$) of heights for three teams with known $\sigma$ and $n<30$. The table below summarize the data.
+
+Team | N | Minimum | Maximum | Mean | Std.Dev. 
+-|----|--------|---------|------|--------
+Bamberg | 16 | 185 | 211 | 199.06 | 7.047
+Leverkusen | 14 | 175 | 210 | 196.00 | 9.782
+Bremen | 23 | 178 | 195 | 187.52 | 5.239
+
+Since $\mu$ is unknown, $\sigma$ is known and n<30 for the three teams, The CI for $\mu$ will use the t-student distribution. 
+
+$$   \bar{x} \pm t_{n-1; 1-\frac{\alpha}{2}} \frac{s}{\sqrt{n}}  $$
+First, let's find the CI for Bemberg Team. Taking into account that the quatile is $t_{15; 0.0975}=2.13145$ and $\alpha=0.005$, the confidence interval will be calculated: 
+
+- t-student:
+```{r}
+qt(1-(0.05/2), 16-1)
+```
+- CI: 
+$$ CI(Bamberg) = 199.06 \pm  2.3145*\frac{7.047}{\sqrt{16}}$$
+- right limit:
+```{r}
+199.06 + qt(1-(0.05/2), 16-1)*(7.047/sqrt(16))
+```
+- left limit: 
+```{r}
+199.06 - qt(1-(0.05/2), 16-1)*(7.047/sqrt(16))
+```
+
+Then, the CI at 95% for the mean is: 195.3049 < $\mu$ < 202.8151.
+
+
+The same process is repeated for Leverkusen and Bremen teams. For Leverkusen, the quantile is $t_{13, 0.975}=2.1788$, so the confidence interval is $[190.3038; 201.6962]$ at 95%.
+
+- t-student:
+```{r}
+qt(1-(0.05/2), 13-1)
+```
+- Right limit:
+```{r}
+196 + qt(1-(0.05/2), 13-1)*(9.782/sqrt(14))
+```
+- Left limit:
+```{r}
+196 - qt(1-(0.05/2), 13-1)*(9.782/sqrt(14))
+```
+For Bremen Team, the quantile is $t_{22, 0.957}=2.0739$; therefore, the CI is $[185.2545;189.7855]$ at 95%.
+- t-student:
+```{r}
+qt(1-(0.05/2), 23-1)
+```
+
+- Right limit:
+```{r}
+187.52 + qt(1-(0.05/2), 23-1)*(5.239/sqrt(23))
+```
+- Left limit
+```{r}
+187.52 - qt(1-(0.05/2), 23-1)*(5.239/sqrt(23))
+```
+Now let's summarize the three CI in the table below. 
+
+Team | Sport |CI inferior limit | CI superior limit 
+-----|-------|------------|------------------
+Bamberg | Basketball | 195.3 | 202.8
+Leverkusen | Basketball | 190.3 | 201.7
+Bremen | Football | 189.8 | 185.3
+
+Comparing the obtained results, we can see that both Basketball teams have taller players than the football team. Also, the CI of Bamberg team and Leverkusen team overlap, however, Bamberg has the tallest players of all teams.  
+
+## Exercise 2 - Attendant in a Car Wash. 
+
+The table below shows the probabilities of receiving a specific payment on Fridays (4:00pm - 5:00pm).
+
+```{r}
+pay = data.frame(payment = c(7, 9, 11, 13, 15, 17),
+           probabilities = c(1/12, 1/12, 1/4, 1/4, 1/6, 1/6) )
+t(pay) %>%  kbl(booktabs = TRUE)
+```
+
+Now, let's calculate the expected earnings of the attendant. 
+
+$$ E(X)= \sum x f(x) $$
+Solving the previous formula:
+```{r include=FALSE}
+attach(pay)
+```
+
+```{r}
+sum(payment*probabilities)
+```
+The expected mean is 12.67, which means that the attendant could get paid 12.67 dollars on Fridays between 4:00pm and 5:00pm. This can also be confirmed with a plot. In the following plot, it can be seen that the higher probabilities values are between 11 and 13 dollars.
+
+
+```{r, fig.width=4,fig.height=4}
+ggplot(pay, aes(x=as.factor(payment), y=probabilities, fill=as.factor(payment ))) +
+  geom_bar(stat="identity", show.legend = FALSE) + ylab("Probability payment") +
+  xlab("Payment (dollars)") + theme_minimal() + 
+    ggtitle("Probability distribution")
+```
+
+## Exercise 3 - Stature of Students.
+We will explore the distribution of 1000 students' stature. The table below has the values of the mean and standard deviation. 
+
+Statistic | Value
+----------|------
+N | 1000 students
+$\mu$ | 174.5cm
+$\sigma$ | 6.9cm
+
+```{r}
+N=1000
+mu = 174.5
+sigma = 6.9
+```
+
+The data distribution is showed in the following chart: 
+```{r, fig.width=4,fig.height=4}
+ggplot(data.frame(x=seq(140,210)), aes(x)) +
+  geom_function(fun = dnorm, 
+                colour = "steelblue", 
+                args=list(mean=mu, sd=sigma)) + 
+  theme_bw() + 
+  ylab("Probability") +  xlab("Stature (cm)")
+```
+
+The following problems are solved using the standardized normal distribution. $Z$ values and their probabilities are calculated. Z is defined as:
+$$ z = \frac{x - \bar{x}}{\sigma}$$
+
+
+**Expected students having less than 160.0 cm**
+
+First, let's calculate the *z* value. Since is only **less than**, it means it has to be a number inferior than 160, which is 159.5, the 0.5 is because the problem stated that heights are recorded to the nearest half-centimeter. 
+```{r}
+z= (159.5 - mu) / sigma
+z
+```
+
+In the plot, we can see the location of the z value, which is negative. Therefore is located in the left side of the curve. The blue area is the probabily we are looking for:
+```{r echo=TRUE, fig.height=3, fig.width=3}
+ggplot(data.frame(x = c(-3, 3)), aes(x)) +
+  stat_function(fun = dnorm,
+                geom = "line",
+                xlim = c(-3, 3)) +
+  stat_function(fun = dnorm,
+                geom = "area",
+                fill = "steelblue",
+                xlim = c(-3, z)) +
+  xlim(-3, 3) + theme_bw() + ylab("Probability") +
+  xlab("Stature (cm)")
+```
+
+
+Then, $P(X < 159.75) = P(X < -2.14)$. The last probability is calculated using *pnorm* and has a value of 0.015
+
+```{r}
+pnorm(z)
+```
+
+Finally, $1000*0.015=15$ students have less than 160.0cm.
+
+
+**Expected students having between 171.5 and 182.0 cm**
+
+- Z values:
+```{r}
+z1 = (171.5-mu)/sigma
+z1
+z2 = (182-mu)/sigma
+z2
+```
+
+The plot has the two $z$ values that define the area we are interested :
+```{r echo=TRUE, fig.height=3, fig.width=3}
+ggplot(data.frame(x = c(-3, 3)), aes(x)) +
+  stat_function(fun = dnorm,
+                geom = "line",
+                xlim = c(-3, 3)) +
+  stat_function(fun = dnorm,
+                geom = "area",
+                fill = "steelblue",
+                xlim = c(z1, z2)) +
+  xlim(-3, 3) + theme_bw() + ylab("Probability") +
+  xlab("Stature (cm)")
+```
+
+
+
+
+
+The probabilities is $P(171.5 \le X \le 159.75) = P(-0.435 \le X \le 1.087)=0.5296$:
+```{r}
+pnorm(z2)-pnorm(z1)
+```
+Finally, about 530 students have heights between 171.5cm and 182.0cm
+```{r}
+N*(pnorm(z2)-pnorm(z1))
+```
+**Expected students having a height equal to 175.cm**
+In this case, we need to take a small interval that contain 175cm. Taking into account the half centimeter, the interval will be 174.5 - 175.5
+
+- Z values:
+```{r}
+z1= (174.5-mu)/sigma
+z1
+z2= (175.5-mu)/sigma
+z2
+```
+
+The plot show the small blue area that contains the 170cm stature. This small interval is defined by the previous $Z$ values. 
+```{r echo=TRUE, fig.height=3, fig.width=3}
+ggplot(data.frame(x = c(-3, 3)), aes(x)) +
+  stat_function(fun = dnorm,
+                geom = "line",
+                xlim = c(-3, 3)) +
+  stat_function(fun = dnorm,
+                geom = "area",
+                fill = "steelblue",
+                xlim = c(z1, z2)) +
+  xlim(-3, 3) + theme_bw() + ylab("Probability") +
+  xlab("Stature (cm)")
+```
+
+
+The probability is $P(174.5 \le X \le 175.5) = P(0 \le X \le 0.145)=0.058$:
+```{r}
+pnorm(z2)-pnorm(z1)
+```
+So, about 58 students have a stature of 175.0cm 
+```{r}
+N*(pnorm(z2)-pnorm(z1))
+```
+**Expected students having a height greater than or equal to 188.0cm**
+
+- Z value:
+```{r}
+z = (188-mu)/sigma
+z
+```
+
+
+The plot shows the location of the z value and the area we are interested in calculate:
+```{r echo=TRUE, fig.height=3, fig.width=3}
+ggplot(data.frame(x = c(-3, 3)), aes(x)) +
+  stat_function(fun = dnorm,
+                geom = "line",
+                xlim = c(-3, 3)) +
+  stat_function(fun = dnorm,
+                geom = "area",
+                fill = "steelblue",
+                xlim = c(z, 3)) +
+  xlim(-3, 3) + theme_bw() + ylab("Probability") +
+  xlab("Stature (cm)")
+```
+
+
+Then $P(X > 188.0) = P(X > 1.957) = 0.025$
+
+```{r}
+1-pnorm(z)
+```
+
+Finally, we can say that there are about 25 students having a height greater or equal than 188.0cm
+```{r}
+N*(1-pnorm(z))
+```
+
+
+
